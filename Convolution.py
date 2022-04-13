@@ -12,12 +12,21 @@ class Convolution:
     def __init__(self,no_of_filters):
         #generally a 3x3 filter is used for convolution of smaller images
         self.no_of_filters = no_of_filters
-        self.filter_size = 3
+        self.filter_size = 2
         #self.windows_list = []
         self.start = 0
-        self.filters = np.random.rand(no_of_filters,self.filter_size,self.filter_size)/9
+        self.filters = np.random.rand(no_of_filters,self.filter_size,self.filter_size)/4
         self.biases = np.random.rand(no_of_filters)
 
+    #Test only
+    # def __init__(self,no_of_filters, weights, biases):
+    #     #generally a 3x3 filter is used for convolution of smaller images
+    #     self.no_of_filters = no_of_filters
+    #     self.filter_size = 2
+    #     #self.windows_list = []
+    #     self.start = 0
+    #     self.filters = weights
+    #     self.biases = biases
 
     def ReLU(self, x):
         return x*(x>0)
@@ -51,8 +60,8 @@ class Convolution:
     def forward_pass(self, image):
         input_c = image.shape[0]
         self.last_input = image
-        out_h = image.shape[1]-self.filter_size+1
-        out_w = image.shape[2]-self.filter_size+1
+        out_h = ((image.shape[1]-self.filter_size)//2)+1
+        out_w = ((image.shape[2]-self.filter_size)//2)+1
         output = np.zeros((self.no_of_filters,out_h,out_w))
 
         for i in range(out_h): 
@@ -72,10 +81,10 @@ class Convolution:
 
     def backward_pass(self, grad_pool, alpha):
         grad_output = (grad_pool)@(self.Grad_ReLU(self.last_output))
+        
         grad_filters = np.zeros(self.filters.shape)
-        out_h = self.last_input.shape[1]-grad_output.shape[1]+1
-        out_w = self.last_input.shape[2]-grad_output.shape[2]+1
-
+        out_h = self.filters.shape[1]
+        out_w = self.filters.shape[2]
 
         #getting the gradients of filters and then updating
         for i in range(out_h): 

@@ -1,9 +1,11 @@
 #...............................#
 ## Created By
 ## Muhammad Saad
-## 17/02/2022
-## Lets begin builing our own cnn
+## 15/03/2022
+## Lets begin encrypting this CNN
 #................................#
+
+
 
 
 import numpy as np
@@ -12,12 +14,24 @@ from Convolution import *
 from Pooling import *
 from Softmax import *
 from Data_Preprocessing import *
+import pickle
 
-
+# with open('./con_weights.pkl', 'rb') as file:
+#     weights = pickle.load(file)
+# with open('./fc_weights.pkl', 'rb') as file:
+#     fc_weights = pickle.load(file)
+# with open('./con_biases.pkl', 'rb') as file:
+#     biases = pickle.load(file)
+# with open('./fc_biases.pkl', 'rb') as file:
+#     fc_biases = pickle.load(file)
 #Initilization of Layers of the CNN Network
 con = Convolution(8)
 pool= Pooling()
 softmax = Softmax(2)
+#testing purposes
+# con = Convolution(8, weights, biases)
+# pool= Pooling()
+# softmax = Softmax(2, fc_weights, fc_biases)
 
 
 #calculating final loss of our network and accuracy
@@ -53,7 +67,7 @@ def forward_pass(image, label):
     return loss, out, acc
 
 #Doing backpropagation in our CNN
-def backward_pass(out, label,alpha=0.005):
+def backward_pass(out, label,alpha=0.001):
     grad = softmax.backward_pass(out,label,alpha)
     grad = pool.backward_pass(grad)
     con.backward_pass(grad,alpha)
@@ -65,30 +79,42 @@ def train(images, labels):
     print("................TRAINING IS STARTING................")
     print("----------------------------------------------------")
 
-    batch_size = 500
+    batch_size = 1000
     accuracy = 0   
     t_loss=0.0
     count =1
     start = time.time()
-
-    for i in range (len(images)):
-        loss, out, acc = forward_pass(images[i],labels[i])
-        t_loss = t_loss+loss
-        accuracy = accuracy+acc
-        if((i+1)%batch_size==0 and i!=0):
-            print(f"[Step: {count}]|Loss: {t_loss/batch_size}|Accuracy: {accuracy/batch_size*100}%")
-            print("-------------------------------------------------------")
-            t_loss = 0.0
-            accuracy = 0
-            count = count+1
-        backward_pass(out,labels[i])
+    for epoch in range(3):
+        print(f".............Epoch {epoch+1} Started...............")
+        print("----------------------------------------------------")
+        for i in range (len(images)):
+            loss, out, acc = forward_pass(images[i],labels[i])
+            t_loss = t_loss+loss
+            accuracy = accuracy+acc
+            if((i+1)%batch_size==0 and i!=0):
+                print(f"[Step: {count}]|Loss: {t_loss/batch_size}|Accuracy: {accuracy/batch_size*100}%")
+                print("-------------------------------------------------------")
+                t_loss = 0.0
+                accuracy = 0
+                count = count+1
+            backward_pass(out,labels[i])
+        print(f"..............Epoch {epoch+1} Ended................")
+        print("----------------------------------------------------")
     
     end = time.time()
     print(f"Total training time: {end-start} seconds")
     print("------------------------------------------------------")
-
-
-
+    print("Storing trained parameters")
+    with open('con_weights.pkl', 'wb') as file:
+        pickle.dump(con.filters, file)
+    with open('con_biases.pkl', 'wb') as file:
+        pickle.dump(con.biases, file)
+    with open('fc_weights.pkl', 'wb') as file:
+        pickle.dump(softmax.weights, file)
+    with open('fc_biases.pkl', 'wb') as file:
+        pickle.dump(softmax.biases, file)
+    print("------------------------------------------------------")
+    
 
 def test(images, labels):
 
@@ -107,6 +133,7 @@ def test(images, labels):
         t_loss = t_loss+loss
     
     end = time.time()
+    
     print("Test loss is: ",t_loss/len(images))
     print(f"Test Accuracy: {(accuracy/len(images))*100}%")
     print(f"Total test time: {end-start} seconds")
@@ -120,21 +147,39 @@ def main():
     print("................LOADING THE DATASET.................")
     print("----------------------------------------------------")
 
+    testing = 0
+    if testing == 0:
+        class_names, X, Y = load_data()
+        X = X/255
+        train_X = X[:30000]
+        train_Y = Y[:30000]
 
-    class_names, X, Y = load_data()
-    X = X/999
-    train_X = X[:10000]
-    train_Y = Y[:10000]
+        test_X = X[30000:]
+        test_Y = Y[30000:]
+        print(f"Classes: {class_names}")
+        print(f"Total Data Samples: {len(X)} ")
+        print(f"Train Samples: {len(train_X)}")
+        print(f"Test Samples: {len(test_X)}")
 
-    test_X = X[10000:]
-    test_Y = Y[10000:]
-    print(f"Classes: {class_names}")
-    print(f"Total Data Samples: {len(X)} ")
-    print(f"Train Samples: {len(train_X)}")
-    print(f"Test Samples: {len(test_X)}")
+        train(train_X,train_Y)
+        test(test_X,test_Y)
+    if testing == 1:
+        # with open('./Data/unseen_X.pkl', 'rb') as file:
+        #     X = pickle.load(file)
+        # with open('./Data/unseen_Y.pkl', 'rb') as file:
+        #     Y = pickle.load(file)
+        # X = X / 255
+        class_names, X, Y = load_data()
+        X = X/255
+        train_X = X[:30000]
+        train_Y = Y[:30000]
 
-    train(train_X,train_Y)
-    test(test_X,test_Y)
+        test_X = X[30000:]
+        test_Y = Y[30000:]
+        
+        
+        test(test_X, test_Y)
+      
 
 
 

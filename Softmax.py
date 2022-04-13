@@ -27,15 +27,24 @@ class Softmax:
         self.weights = np.zeros(final_out)
         self.start = 0
         self.output_len = 0
+    
+    # only testing
+    # def __init__(self,final_out, weights, biases):
+    #     self.final_out = final_out
+    #     self.biases = biases
+    #     self.weights = weights
+    #     self.start = 0
+    #     self.output_len = 0
+    
+    
 
     def forward_pass(self,input):
         if(self.start ==0):
             self.output_len = input.shape[0]*input.shape[1]*input.shape[2]
             self.weights = np.random.rand(self.output_len,self.final_out)/self.output_len
             self.start =1
-        
-        
         flatten_arr = np.ndarray.flatten(input)
+
         self.last_input = flatten_arr
         self.last_input_shape  = input.shape
         output = np.dot(flatten_arr,self.weights)

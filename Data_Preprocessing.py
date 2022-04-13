@@ -9,22 +9,23 @@ import pandas as pd
 import numpy as np
 
 def load_data():
-    gmail_1 = pd.read_csv('./Data/Gmail.csv', delimiter=',')
-    gmail = gmail_1.to_numpy()
-    y_gmail  = np.zeros((len(gmail),2), dtype=int)
-    y_gmail[:,0] = 1
-    gmail = np.append(gmail,y_gmail, axis=1)
+    cridex_1 = pd.read_csv('./Data/Cridex.csv', delimiter=',')
+    cridex = cridex_1.to_numpy()
+    cridex = cridex[:20000]
+    y_cridex  = np.zeros((len(cridex),2), dtype=int)
+    y_cridex[:,0] = 1
+    cridex = np.append(cridex,y_cridex, axis=1)
 
-    neris_1 = pd.read_csv('./Data/Neris.csv', delimiter=',')
-    neris = neris_1.to_numpy()
-    neris = neris[:8000]
-    y_neris  = np.zeros((len(neris),2), dtype=int)
-    y_neris[:,1] = 1
-    neris = np.append(neris,y_neris, axis=1)
+    smb_1 = pd.read_csv('./Data/SMB.csv', delimiter=',')
+    smb = smb_1.to_numpy()
+    smb = smb[:20000]
+    y_smb  = np.zeros((len(smb),2), dtype=int)
+    y_smb[:,1] = 1
+    smb = np.append(smb,y_smb, axis=1)
     
-    class_names = ["gmail", "neris"]
+    class_names = ["cridex", "smb"]
 
-    X_data = np.concatenate((gmail,neris), axis=0)
+    X_data = np.concatenate((cridex,smb), axis=0)
     np.random.shuffle(X_data)
     X_new = X_data[:,:784]
     Y = X_data[:,784:]

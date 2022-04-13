@@ -38,7 +38,6 @@ class Pooling:
                 col = col+1
             
             row = row+1
-        
         return output
 
 
