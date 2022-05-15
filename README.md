@@ -3,7 +3,7 @@ A CNN created from scratch using numpy only
 
 I created this model while working on my thesis to help me build deep understanding of CNN.
 
-This is also trained using degree 2 polynomial approximation of  ReLU for gathering weights and biases for my [Encrypted CNN](https://github.com/Arman001/CNN_Encrypted). There are version present of stride 2 and 3 for the purpose of better implementation on the fully homomorphic encrypted data.
+This is also trained using degree 2 polynomial approximation of  ReLU a part from simpler ReLU for gathering weights and biases for my [Encrypted CNN](https://github.com/Arman001/CNN_Encrypted). There are versions present of stride 2 and 3 for the purpose of better implementation on the fully homomorphic encrypted data.
 
 This is a very slow version as I used loops to perform convolution and pooling operation. But it can provide good understanding. 
 
